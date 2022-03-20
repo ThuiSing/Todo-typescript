@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useRef } from "react";
+import React, { useCallback, useReducer, useRef, useState } from "react";
 import { Box } from "@mui/system";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
@@ -8,7 +8,6 @@ import {
   IconButton,
   ListItem,
   ListItemAvatar,
-  ListItemText,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 const Item = styled(Paper)(({ theme }) => ({
@@ -57,9 +56,10 @@ const Todo = () => {
         return state.filter(({ id }) => id !== action.id);
     }
   };
-  const [todo, dispatch] = useReducer(
+  const gotData = JSON.parse(`${localStorage.getItem("Todo")}`);
+  const [todoData, dispatch] = useReducer(
     reducer,
-    JSON.parse(`${localStorage.getItem("Todo")}`)
+    gotData === null ? [] : gotData
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -74,7 +74,7 @@ const Todo = () => {
         window.alert("No enpty boxes allowed");
       } else {
         const newItem = {
-          id: todo.length,
+          id: todoData.length,
           text: inputRef.current?.value,
           description: desRef.current?.value,
         };
@@ -87,7 +87,7 @@ const Todo = () => {
         inputRef.current.value = "";
       }
     }
-  }, [todo]);
+  }, [todoData]);
 
   const handleDEl = (id: number) => {
     // console.log(id);
@@ -153,7 +153,7 @@ const Todo = () => {
         spacing={{ xs: 2, md: 3 }}
         columns={{ xs: 4, sm: 8, md: 12 }}
       >
-        {todo.map((data, newId) => (
+        {todoData.map((data, newId) => (
           <Grid item xs={2} sm={4} md={4} key={data.id}>
             <Item>
               <ListItem
